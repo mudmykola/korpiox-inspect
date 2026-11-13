@@ -10,16 +10,30 @@
 ```text
 entrypoints/
   background.ts
-  sidepanel/{index.html,main.ts,App.vue}
+  sidepanel/
+    {index.html,main.ts,App.vue}
+    components/
+      header/{AppHeader.vue,HeaderLogo.vue}
+      inspector/{InspectorStatus.vue,InspectorActions.vue,ErrorCard.vue}
+      results/{ElementInspectionResult.vue,PixelSampleResult.vue}
+      history/InspectionHistory.vue
+      EmptyState.vue
 src/
   features/element-picker/{dom/,services/}
   features/color-inspector/{components/,services/}
+  features/inspector/useInspectorController.ts
   shared/{browser/,color/,messaging/,types/}
   stores/inspector.store.ts
   app/styles/
 tests/{unit/,integration/,e2e/,fixtures/}
 ```
 WXT's entrypoint naming and config must match its current official conventions. Create only needed files.
+
+## Vue composition rules
+- `entrypoints/sidepanel/App.vue` is a composition-only container. It connects feature components and the feature composable; it does not own browser calls, business logic or large markup sections.
+- Organize sidepanel components by responsibility under `entrypoints/sidepanel/components/<feature>/`. Keep reusable sections in separate components with typed props and emits.
+- Put state coordination, browser messaging, lifecycle listeners and side effects in `src/features/<feature>/use*.ts` composables or services.
+- Presentational components must not import browser APIs or reach into page DOM. Preserve existing styling classes while performing structural refactors.
 
 ## Data flow
 Sidepanel button -> typed command -> inject/activate picker in active tab -> pointer hover highlight -> click selection -> content script computes styles -> serializable inspection DTO -> sidepanel store -> UI. Cancel/stop removes listeners and overlay.
