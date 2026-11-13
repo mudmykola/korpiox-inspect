@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>KORPIOX Inspect Fixture</title>
+    <style>
+      :root {
+        --brand: #22d3ee;
+      }
+      body {
+        margin: 32px;
+        color: #e2e8f0;
+        background: #080d18;
+        font: 16px system-ui;
+      }
+      .solid {
+        padding: 20px;
+        color: #0f172a;
+        background: var(--brand);
+        border: 3px solid #a78bfa;
+      }
+      .alpha {
+        background: rgb(34 211 238 / 0.35);
+        border-color: transparent;
+      }
+      .gradient {
+        background: linear-gradient(90deg, #22d3ee, #a78bfa);
+      }
+      .shadow-host {
+        padding: 12px;
+        border: 1px solid #334155;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 class="solid">Solid colors</h1>
+      <p class="alpha">Alpha background</p>
+      <section class="gradient">Gradient background</section>
+      <div class="shadow-host">Open shadow boundary fixture</div>
+    </main>
+    <script>
+      const host = document.querySelector('.shadow-host');
+      const root = host.attachShadow({ mode: 'open' });
+      root.innerHTML = '<span style="color:#f0abfc">Shadow text</span>';
+    </script>
+  </body>
+</html>

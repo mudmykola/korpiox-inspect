@@ -1,0 +1,60 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+package-lock.json
+
+# WXT, Vite and build output
+.output/
+.wxt/
+dist/
+build/
+
+# Test and coverage artifacts
+coverage/
+test-results/
+playwright-report/
+blob-report/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+*.secret
+*.secrets
+*.pem
+*.key
+
+# Logs and temporary files
+*.log
+pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tmp/
+temp/
+output/
+
+# Operating system and editor files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local automation and generated reports
+.playwright/
+.cache/
+
+# Agent-only instructions and local AI tooling
+.agents/
+.claude/
+.codex/
+AGENTS.md
+CLAUDE.md
+BOOTSTRAP_PROMPT.md
+docs/AGENT_TOOLING.md
+docs/updates/
