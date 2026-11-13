@@ -1,7 +1,7 @@
 # Architecture
 
 ## Runtime contexts
-- **Sidepanel (Vue)**: presentation, local Pinia state, commands, clipboard.
+- **Panel UI (Vue)**: presentation, local Pinia state, commands, clipboard. Chrome renders the entrypoint as a side panel; Firefox renders it as a sidebar.
 - **Content script**: element hover/click capture, overlay, DOM and computed style inspection.
 - **Background service worker**: optional browser lifecycle, action click, tab coordination and permission/injection orchestration. Must tolerate suspension.
 - **Shared core**: color parsing/normalization, DTO types, validation and message contracts.
@@ -22,7 +22,9 @@ src/
   features/element-picker/{dom/,services/}
   features/color-inspector/{components/,services/}
   features/inspector/useInspectorController.ts
-  shared/{browser/,color/,messaging/,types/}
+  features/pixel-picker/{dom/,samplePixel.ts}
+  shared/browser/{panel.ts,permissions.ts,pixelPicker.ts}
+  shared/{color/,messaging/,types/}
   stores/inspector.store.ts
   app/styles/
 tests/{unit/,integration/,e2e/,fixtures/}
@@ -34,6 +36,11 @@ WXT's entrypoint naming and config must match its current official conventions. 
 - Organize sidepanel components by responsibility under `entrypoints/sidepanel/components/<feature>/`. Keep reusable sections in separate components with typed props and emits.
 - Put state coordination, browser messaging, lifecycle listeners and side effects in `src/features/<feature>/use*.ts` composables or services.
 - Presentational components must not import browser APIs or reach into page DOM. Preserve existing styling classes while performing structural refactors.
+
+## Browser adapters
+- Keep browser-specific APIs under `src/shared/browser/` and expose small capability-focused functions to entrypoints and feature controllers.
+- Chrome and Firefox may use different manifest keys or browser APIs, but they share the same Vue entrypoint and serializable feature contracts.
+- Use WXT target constants such as `import.meta.env.CHROME` and `import.meta.env.FIREFOX` only at browser boundaries; do not spread browser checks through presentational components.
 
 ## Data flow
 Sidepanel button -> typed command -> inject/activate picker in active tab -> pointer hover highlight -> click selection -> content script computes styles -> serializable inspection DTO -> sidepanel store -> UI. Cancel/stop removes listeners and overlay.

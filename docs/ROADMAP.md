@@ -1,7 +1,7 @@
 # Roadmap
 
 ## Phase 0 — Bootstrap
-WXT + Vue + TS + pnpm + Tailwind + ESLint + Prettier + tests + CI. Verify Chromium dev loading.
+WXT + Vue + TS + pnpm + Tailwind + ESLint + Prettier + tests + CI. Verify Chrome/Chromium and Firefox development loading.
 
 ## Phase 1 — Vertical slice (MVP)
 Sidepanel, active-tab injection, picker overlay, click/Escape, computed text/background/border color, conversion, copy, error states.
@@ -25,13 +25,13 @@ Acceptance criteria:
 - Result hierarchy is understandable without opening developer details.
 - Copy, history, restore, export and clear actions have clear feedback and accessible labels.
 - Narrow sidepanel layout is checked at realistic widths and long selectors/attributes do not break the layout.
-- Keyboard focus, Escape cancellation and error recovery are manually verified in Chromium.
+- Keyboard focus, Escape cancellation and error recovery are manually verified in Chrome/Chromium and Firefox.
 - The final UX decisions are documented with screenshots or a short decision note.
 
 ## Phase 3 — Color workflows
 Pixel picker (supported browsers), local color history, palettes, CSS variable hints, contrast checker.
 
-## Phase 4 — Browser expansion
+## Phase 4 — Browser parity
 Firefox sidebar/browser API adapters and compatibility testing. Avoid promising parity where APIs differ.
 
 ## Phase 5 — Public release

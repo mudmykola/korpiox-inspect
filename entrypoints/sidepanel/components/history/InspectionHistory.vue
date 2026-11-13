@@ -22,7 +22,8 @@ function formatDate(value: string) {
       <h2 id="history-title">{{ copy.history.title }}</h2>
       <div class="history-actions">
         <button class="icon-button" :aria-label="copy.history.export" @click="$emit('export')">
-          <Download :size="14" aria-hidden="true" /></button
+          <Download :size="14" aria-hidden="true" />
+</button
         ><button class="icon-button" :aria-label="copy.history.clear" @click="$emit('clear')">
           <Trash2 :size="14" aria-hidden="true" />
         </button>

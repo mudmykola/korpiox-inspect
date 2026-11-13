@@ -1,5 +1,11 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { browser } from 'wxt/browser';
+import { ensureOriginAccess, requestFirefoxHostAccess } from '../../shared/browser/permissions';
+import {
+  captureVisibleTab,
+  openNativePixelPicker,
+  supportsNativePixelPicker,
+} from '../../shared/browser/pixelPicker';
 import { useInspectorStore } from '../../stores/inspector.store';
 import { getContrastLevel, getContrastRatio } from '../../shared/color/contrast';
 import type {
@@ -20,6 +26,15 @@ export interface ColorEntry {
 
 export interface BorderEntry extends ColorEntry {
   key: 'top' | 'right' | 'bottom' | 'left';
+}
+
+function pageAccessError(
+  access: { ok: false; reason: 'no-url' | 'unavailable' | 'denied'; host?: string },
+  copy: typeof uk,
+) {
+  if (access.reason === 'no-url') return copy.error.noUrl;
+  if (access.reason === 'unavailable') return copy.error.unavailablePage;
+  return copy.error.accessDenied(access.host ?? 'поточної сторінки');
 }
 
 export function useInspectorController() {
@@ -78,11 +93,18 @@ export function useInspectorController() {
     error.value = null;
     requestId.value = crypto.randomUUID();
     try {
+      const firefoxAccessRequest = type === 'PICKER_START' ? requestFirefoxHostAccess() : null;
       const [tab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
       if (!tab?.id) throw new Error(copy.error.noActiveTab);
       if (!tab.url) throw new Error(copy.error.noUrl);
       if (type === 'PICKER_START') {
-        await requestPageAccess(tab.url);
+        if (firefoxAccessRequest) {
+          const granted = await firefoxAccessRequest;
+          if (!granted) throw new Error(copy.error.accessDenied(new URL(tab.url).host));
+        } else {
+          const access = await ensureOriginAccess(tab.url);
+          if (!access.ok) throw new Error(pageAccessError(access, copy));
+        }
         state.value = 'picking';
       }
       await browser.scripting.executeScript({
@@ -97,41 +119,45 @@ export function useInspectorController() {
     }
   }
 
-  async function requestPageAccess(pageUrl: string) {
-    let url: URL;
-    try {
-      url = new URL(pageUrl);
-    } catch {
-      throw new Error(copy.error.noUrl);
-    }
-    if (!['http:', 'https:'].includes(url.protocol)) {
-      throw new Error(copy.error.unavailablePage);
-    }
-    const origin = `${url.protocol}//${url.host}/*`;
-    const alreadyGranted = await browser.permissions.contains({ origins: [origin] });
-    if (!alreadyGranted) {
-      const granted = await browser.permissions.request({ origins: [origin] });
-      if (!granted) throw new Error(copy.error.accessDenied(url.host));
-    }
-  }
-
   async function startPixelPicker() {
     error.value = null;
-    if (!window.EyeDropper) {
+    requestId.value = crypto.randomUUID();
+
+    if (import.meta.env.FIREFOX) {
+      const firefoxAccessRequest = requestFirefoxHostAccess();
+      state.value = 'pixel-picking';
+      try {
+        const [tab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+        if (!tab?.id) throw new Error(copy.error.noActiveTab);
+        if (!tab.url) throw new Error(copy.error.noUrl);
+        if (!(await firefoxAccessRequest)) {
+          throw new Error(copy.error.accessDenied(new URL(tab.url).host));
+        }
+        const screenshot = await captureVisibleTab(tab.windowId);
+        await browser.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['/content-scripts/content.js'],
+        });
+        await browser.tabs.sendMessage(tab.id, {
+          type: 'PIXEL_PICKER_START',
+          requestId: requestId.value,
+          screenshot,
+        });
+      } catch (cause) {
+        state.value = 'error';
+        error.value = cause instanceof Error ? cause.message : copy.error.pixelFailed;
+      }
+      return;
+    }
+
+    if (!supportsNativePixelPicker()) {
       state.value = 'error';
       error.value = copy.error.pixelUnavailable;
       return;
     }
     state.value = 'pixel-picking';
     try {
-      const result = await new window.EyeDropper().open();
-      const hex = result.sRGBHex.toLowerCase();
-      const channels = [1, 3, 5].map((index) => Number.parseInt(hex.slice(index, index + 2), 16));
-      const sample: PixelSample = {
-        source: 'pixel',
-        hex,
-        rgb: `rgb(${channels.join(' ')})`,
-      };
+      const sample = await openNativePixelPicker();
       pixelSample.value = sample;
       inspectorStore.addPixelSample(sample);
       state.value = 'selected';
@@ -163,8 +189,15 @@ export function useInspectorController() {
       pixelSample.value = null;
       inspectorStore.addInspection(message.payload);
       state.value = 'selected';
+    } else if (message.type === 'PIXEL_SELECTED') {
+      pixelSample.value = message.payload;
+      inspection.value = null;
+      inspectorStore.addPixelSample(message.payload);
+      state.value = 'selected';
     } else if (message.type === 'PICKER_CANCELLED') {
       state.value = 'ready';
+    } else if (message.type === 'PIXEL_PICKER_CANCELLED') {
+      state.value = inspection.value || pixelSample.value ? 'selected' : 'ready';
     } else if (message.type === 'PICKER_ERROR') {
       state.value = 'error';
       error.value = message.message;

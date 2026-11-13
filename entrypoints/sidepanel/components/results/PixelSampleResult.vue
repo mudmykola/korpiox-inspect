@@ -33,7 +33,8 @@ defineEmits<{ 'copy-value': [value: string | null]; 'copy-result': [] }>();
     <div class="value-actions pixel-actions">
       <button class="value-button" @click="$emit('copy-value', pixelSample.hex)">
         {{ copied === pixelSample.hex ? 'Скопійовано' : copy.actions.copyHex }}
-        <Copy :size="13" aria-hidden="true" /></button
+        <Copy :size="13" aria-hidden="true" />
+</button
       ><button
         class="value-button value-button-muted"
         @click="$emit('copy-value', pixelSample.rgb)"

@@ -23,3 +23,4 @@
 - Is clipboard write initiated by user action?
 - Is optional host access requested only for the active HTTP(S) origin and after the user starts picking?
 - Does Pixel picker use the user-initiated EyeDropper API without screenshot, capture, or upload permissions?
+- Firefox pixel picker may use `tabs.captureVisibleTab()` after explicit user action; keep the screenshot in memory only, sample the selected pixel locally, and never persist or transmit the image.
