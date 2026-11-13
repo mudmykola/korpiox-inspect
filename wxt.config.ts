@@ -6,7 +6,7 @@ export default defineConfig({
   vite: () => ({
     plugins: [tailwindcss()],
   }),
-  manifest: {
+  manifest: ({ browser }) => ({
     name: 'KORPIOX Inspect — інспектор кольорів',
     description:
       'Вибирайте елементи на сторінці й переглядайте їхні кольори, ID, класи та контраст WCAG у боковій панелі.',
@@ -17,10 +17,21 @@ export default defineConfig({
       128: 'icons/icon-128.png',
     },
     permissions: ['activeTab', 'tabs', 'scripting', 'clipboardWrite'],
-    optional_host_permissions: ['*://*/*'],
     action: {},
-    side_panel: {
-      default_path: 'sidepanel.html',
-    },
-  },
+    ...(browser === 'firefox'
+      ? {
+          optional_permissions: ['<all_urls>'],
+          sidebar_action: { default_panel: 'sidepanel.html' },
+          browser_specific_settings: {
+            gecko: {
+              id: 'korpiox-inspect@mudmykola',
+              data_collection_permissions: { required: ['none'] },
+            },
+          },
+        }
+      : {
+          optional_host_permissions: ['*://*/*'],
+          side_panel: { default_path: 'sidepanel.html' },
+        }),
+  }),
 });

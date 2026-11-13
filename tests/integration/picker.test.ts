@@ -25,6 +25,16 @@ describe('element picker lifecycle', () => {
 
     expect(document.querySelectorAll('#korpiox-inspect-overlay')).toHaveLength(1);
     expect(document.querySelectorAll('#korpiox-inspect-picker-styles')).toHaveLength(1);
+    expect(
+      document
+        .querySelector('#korpiox-inspect-overlay')
+        ?.classList.contains('korpiox-inspect-overlay'),
+    ).toBe(true);
+    expect(
+      document
+        .querySelector('.korpiox-inspect-overlay__label')
+        ?.classList.contains('korpiox-inspect-overlay__label'),
+    ).toBe(true);
   });
 
   it('selects an element and sends serializable color data', () => {
@@ -70,5 +80,22 @@ describe('element picker lifecycle', () => {
     expect(document.querySelector('#korpiox-inspect-picker-styles')).toBeNull();
     expect(sendMessage).toHaveBeenCalledTimes(1);
     expect(sendMessage).toHaveBeenCalledWith({ type: 'PICKER_CANCELLED', requestId: 'escape' });
+  });
+
+  it('stops only for the active request and removes injected styles', () => {
+    const picker = createPicker();
+
+    picker.start('stop');
+    picker.stop('stale');
+
+    expect(document.querySelector('#korpiox-inspect-overlay')).not.toBeNull();
+    expect(document.querySelector('#korpiox-inspect-picker-styles')).not.toBeNull();
+    expect(sendMessage).not.toHaveBeenCalled();
+
+    picker.stop('stop');
+
+    expect(document.querySelector('#korpiox-inspect-overlay')).toBeNull();
+    expect(document.querySelector('#korpiox-inspect-picker-styles')).toBeNull();
+    expect(sendMessage).toHaveBeenCalledWith({ type: 'PICKER_CANCELLED', requestId: 'stop' });
   });
 });

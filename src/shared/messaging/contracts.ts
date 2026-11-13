@@ -44,8 +44,13 @@ export type InspectionHistoryItem =
       capturedAt: string;
       sample: PixelSample;
     };
-export type InspectorCommand = { type: 'PICKER_START' | 'PICKER_STOP'; requestId: string };
+export type InspectorCommand =
+  | { type: 'PICKER_START' | 'PICKER_STOP'; requestId: string }
+  | { type: 'PIXEL_PICKER_START'; requestId: string; screenshot: string }
+  | { type: 'PIXEL_PICKER_STOP'; requestId: string };
 export type InspectorEvent =
   | { type: 'ELEMENT_SELECTED'; requestId: string; payload: ElementInspection }
+  | { type: 'PIXEL_SELECTED'; requestId: string; payload: PixelSample }
   | { type: 'PICKER_CANCELLED'; requestId: string }
+  | { type: 'PIXEL_PICKER_CANCELLED'; requestId: string }
   | { type: 'PICKER_ERROR'; requestId: string; message: string };

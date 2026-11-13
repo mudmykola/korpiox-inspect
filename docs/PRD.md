@@ -6,8 +6,8 @@ KORPIOX Inspect — інспектор кольорів: privacy-first browser e
 ## Audience
 Frontend engineers, Shopify theme developers, QA engineers and designers.
 
-## MVP scope (Chrome/Chromium)
-1. Open extension sidepanel.
+## MVP scope (Chrome/Chromium and Firefox)
+1. Open the extension side panel in Chrome/Chromium or sidebar in Firefox.
 2. Click **Pick Element** to enter selection mode.
 3. Highlight hovered DOM element with non-interfering overlay.
 4. Click to select; Escape to cancel; explicit Stop button.
@@ -17,11 +17,10 @@ Frontend engineers, Shopify theme developers, QA engineers and designers.
 8. Copy a chosen value to clipboard.
 9. Handle unsupported/restricted pages, permission errors and stale tabs gracefully.
 10. No account, backend, analytics or external requests.
-11. Chromium Pixel picker uses the native EyeDropper API when available and falls back to the DOM picker when unavailable.
+11. The native EyeDropper API is used when available; Firefox uses a local visible-viewport screenshot picker and the DOM picker remains the fallback.
 
 ## Out of scope for MVP
-Pixel sampling from screenshots/images/canvas; complete CSS cascade/source tracing; cross-origin iframe inspection; global site-wide palette extraction; cloud sync; AI features; Firefox sidebar support.
-Pixel picker parity outside Chromium remains out of scope for this milestone.
+Pixel sampling from user-provided screenshots/images/canvas; complete CSS cascade/source tracing; cross-origin iframe inspection; global site-wide palette extraction; cloud sync; AI features.
 
 ## Acceptance criteria
 - User-triggered picker works on ordinary HTTPS sites without blanket host permissions.
@@ -33,4 +32,4 @@ Pixel picker parity outside Chromium remains out of scope for this milestone.
 - Tests and production build run successfully.
 
 ## Later milestones
-Pixel Eyedropper with browser support detection; history and export; CSS variables/source inspection; WCAG contrast; Firefox support.
+Pixel EyeDropper with browser support detection; history and export; CSS variables/source inspection; WCAG contrast; cross-browser regression coverage.

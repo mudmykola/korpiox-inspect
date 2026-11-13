@@ -1,3 +1,5 @@
+import { configurePanelBehavior } from '../src/shared/browser/panel';
+
 export default defineBackground(() => {
-  void browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+  void configurePanelBehavior();
 });
