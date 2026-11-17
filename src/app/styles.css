@@ -309,7 +309,7 @@ summary:focus-visible {
 }
 .inspection-stack {
   display: grid;
-  gap: 8px;
+  gap: 9px;
   margin-top: 0;
   min-width: 0;
 }
@@ -336,13 +336,13 @@ summary:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: -2px;
+  padding: 2px 2px 0;
 }
 .result-heading h2 {
   overflow: hidden;
-  margin: 3px 0 0;
+  margin: 2px 0 0;
   color: #f8fafc;
-  font-size: var(--font-lg);
+  font-size: clamp(17px, 5vw, 21px);
   letter-spacing: -0.02em;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -351,22 +351,29 @@ summary:focus-visible {
   min-width: 0;
 }
 .element-card {
+  position: relative;
   min-width: 0;
-  padding: 10px;
+  padding: 13px 14px 12px 16px;
+  overflow: hidden;
+  border-color: rgb(34 211 238 / 0.28);
+  background: linear-gradient(120deg, rgb(8 145 178 / 0.16), transparent 58%), rgb(15 23 42 / 0.9);
+  box-shadow: inset 3px 0 #22d3ee;
 }
 .element-tag {
-  margin: 5px 0 0;
-  color: #a5f3fc;
+  margin: 4px 0 0;
+  color: #cffafe;
   font:
-    700 var(--font-md) / 1.3 ui-monospace,
+    750 clamp(17px, 5vw, 21px) / 1.25 ui-monospace,
     SFMono-Regular,
     Menlo,
     monospace;
 }
 .selector-text {
-  margin: 8px 0 0;
+  margin: 9px 0 0;
+  padding-top: 8px;
   overflow-wrap: anywhere;
   color: #64748b;
+  border-top: 1px solid rgb(148 163 184 / 0.12);
   font:
     10px/1.4 ui-monospace,
     SFMono-Regular,
@@ -386,6 +393,10 @@ summary:focus-visible {
   background: rgb(15 23 42 / 0.78);
   border-radius: 13px;
   min-width: 0;
+}
+.details-card {
+  padding: 0 13px 11px;
+  background: rgb(15 23 42 / 0.48);
 }
 .pixel-sample-card {
   display: grid;
@@ -467,12 +478,23 @@ summary:focus-visible {
   background: rgb(8 145 178 / 0.2);
 }
 .contrast-card {
-  padding: 12px;
+  padding: 14px;
+  border-color: rgb(34 197 94 / 0.24);
+  background: linear-gradient(120deg, rgb(34 197 94 / 0.1), transparent 62%), rgb(15 23 42 / 0.88);
+}
+.contrast-card:has(.contrast-aa-large) {
+  border-color: rgb(234 179 8 / 0.3);
+  background: linear-gradient(120deg, rgb(234 179 8 / 0.1), transparent 62%), rgb(15 23 42 / 0.88);
+}
+.contrast-card:has(.contrast-fail),
+.contrast-card:has(.contrast-unavailable) {
+  border-color: rgb(225 29 72 / 0.3);
+  background: linear-gradient(120deg, rgb(225 29 72 / 0.1), transparent 62%), rgb(15 23 42 / 0.88);
 }
 .contrast-value {
-  margin-top: 4px;
+  margin-top: 6px;
   color: #f8fafc;
-  font-size: clamp(21px, 7vw, 28px);
+  font-size: clamp(25px, 9vw, 34px);
   font-weight: 800;
   letter-spacing: -0.04em;
 }
@@ -598,6 +620,12 @@ summary:focus-visible {
   font-size: var(--font-md);
   font-weight: 750;
 }
+.color-section {
+  padding: 13px;
+  border: 1px solid #1e293b;
+  background: rgb(15 23 42 / 0.56);
+  border-radius: 13px;
+}
 .section-count {
   display: grid;
   place-items: center;
@@ -611,14 +639,22 @@ summary:focus-visible {
 }
 .color-list {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 .color-card {
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  gap: 9px;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 10px;
   min-width: 0;
-  padding: 10px;
+  padding: 9px;
+  background: rgb(15 23 42 / 0.72);
+  transition:
+    border-color 140ms ease,
+    background 140ms ease;
+}
+.color-card:hover {
+  border-color: rgb(34 211 238 / 0.35);
+  background: rgb(19 36 58 / 0.9);
 }
 .swatch,
 .border-dot {
@@ -627,9 +663,10 @@ summary:focus-visible {
   border: 1px solid rgb(255 255 255 / 0.2);
 }
 .swatch {
-  width: 24px;
-  height: 24px;
-  border-radius: 7px;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.05);
 }
 .swatch-empty {
   background: repeating-conic-gradient(#334155 0 25%, #0f172a 0 50%) 50% / 8px 8px;
@@ -640,7 +677,7 @@ summary:focus-visible {
 .color-name {
   margin: 0;
   color: #e2e8f0;
-  font-size: var(--font-sm);
+  font-size: var(--font-md);
   font-weight: 700;
 }
 .color-raw {
@@ -663,7 +700,7 @@ summary:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  margin-top: 3px;
+  margin-top: 5px;
 }
 .value-button {
   display: inline-flex;
@@ -700,7 +737,8 @@ summary:focus-visible {
 }
 
 .border-details {
-  padding: 0 12px;
+  padding: 0 13px;
+  background: rgb(15 23 42 / 0.44);
 }
 .border-details summary {
   padding: 11px 0;
@@ -785,5 +823,22 @@ summary:focus-visible {
 
   .action-row .button {
     width: 100%;
+  }
+
+  .element-card,
+  .color-section,
+  .contrast-card {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+
+  .color-card {
+    grid-template-columns: 26px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .swatch {
+    width: 26px;
+    height: 26px;
   }
 }
