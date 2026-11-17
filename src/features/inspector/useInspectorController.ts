@@ -17,6 +17,7 @@ import type {
 import { uk } from '../../shared/i18n/uk';
 
 export type InspectorState = 'ready' | 'picking' | 'pixel-picking' | 'selected' | 'error';
+export type CopyTarget = 'result' | 'details' | string | null;
 
 export interface ColorEntry {
   key: string;
@@ -41,7 +42,7 @@ export function useInspectorController() {
   const inspection = ref<ElementInspection | null>(null);
   const error = ref<string | null>(null);
   const state = ref<InspectorState>('ready');
-  const copied = ref<string | null>(null);
+  const copied = ref<CopyTarget>(null);
   const pixelSample = ref<PixelSample | null>(null);
   const requestId = ref(crypto.randomUUID());
   const inspectorStore = useInspectorStore();
@@ -158,6 +159,7 @@ export function useInspectorController() {
     state.value = 'pixel-picking';
     try {
       const sample = await openNativePixelPicker();
+      inspection.value = null;
       pixelSample.value = sample;
       inspectorStore.addPixelSample(sample);
       state.value = 'selected';
@@ -171,15 +173,19 @@ export function useInspectorController() {
     }
   }
 
-  async function copyValue(value: string | null) {
-    if (!value) return;
+  async function copyText(value: string, target: Exclude<CopyTarget, null>) {
     try {
       await navigator.clipboard.writeText(value);
-      copied.value = value;
+      copied.value = target;
       window.setTimeout(() => (copied.value = null), 1200);
     } catch {
       error.value = copy.error.clipboardUnavailable;
     }
+  }
+
+  async function copyValue(value: string | null) {
+    if (!value) return;
+    await copyText(value, value);
   }
 
   function handleMessage(message: InspectorEvent) {
@@ -205,14 +211,16 @@ export function useInspectorController() {
   }
 
   async function copyDetails() {
-    if (inspection.value) await copyValue(JSON.stringify(inspection.value.details, null, 2));
+    if (inspection.value) {
+      await copyText(JSON.stringify(inspection.value.details, null, 2), 'details');
+    }
   }
 
   async function copyResult() {
     if (inspection.value) {
-      await copyValue(JSON.stringify(inspection.value, null, 2));
+      await copyText(JSON.stringify(inspection.value, null, 2), 'result');
     } else if (pixelSample.value) {
-      await copyValue(JSON.stringify(pixelSample.value, null, 2));
+      await copyText(JSON.stringify(pixelSample.value, null, 2), 'result');
     }
   }
 
