@@ -61,6 +61,11 @@ export function createPicker() {
     void send({ type: 'ELEMENT_SELECTED', requestId, payload });
   };
   const onKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter' && current && selectedRequestId) {
+      event.preventDefault();
+      onClick(new MouseEvent('click', { bubbles: true }));
+      return;
+    }
     if (event.key === 'Escape' && selectedRequestId) {
       const requestId = selectedRequestId;
       cleanup();

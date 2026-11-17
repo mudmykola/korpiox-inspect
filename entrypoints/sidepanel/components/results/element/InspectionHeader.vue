@@ -12,9 +12,14 @@ defineEmits<{ copy: [] }>();
       <p class="section-kicker">{{ resultType }}</p>
       <h2 id="result-title">{{ copy.result.computedStyles }}</h2>
     </div>
-    <button class="icon-button" :aria-label="copy.actions.copyJson" @click="$emit('copy')">
+    <button
+      class="result-copy-button"
+      :aria-label="copied ? copy.actions.copiedResult : copy.actions.copyResult"
+      @click="$emit('copy')"
+    >
       <Check v-if="copied" :size="14" aria-hidden="true" />
       <Copy v-else :size="14" aria-hidden="true" />
+      <span>{{ copied ? copy.actions.copiedResult : copy.actions.copyResult }}</span>
     </button>
   </div>
 </template>

@@ -21,6 +21,7 @@ const {
   copied,
   copy,
   copyDetails,
+  copyCss,
   copyResult,
   copyValue,
   error,
@@ -79,6 +80,7 @@ function restoreHistoryItem(id: string) {
         :copy="copy"
         @copy-value="copyValue"
         @copy-details="copyDetails"
+        @copy-css="copyCss"
         @copy-result="copyResult"
       />
       <PixelSampleResult
