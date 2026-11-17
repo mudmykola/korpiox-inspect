@@ -1,16 +1,39 @@
 <script setup lang="ts">
 import { Copy } from 'lucide-vue-next';
+import { computed } from 'vue';
 import type { UiCopy } from '@/src/shared/i18n/uk.ts';
 import type { ElementInspection } from '@/src/shared/messaging/contracts.ts';
 
-defineProps<{ inspection: ElementInspection; copied: boolean; copy: UiCopy }>();
-defineEmits<{ copy: [] }>();
+const props = defineProps<{
+  inspection: ElementInspection;
+  copied: boolean;
+  copiedCss: boolean;
+  copy: UiCopy;
+}>();
+defineEmits<{ copy: []; 'copy-css': [value: string] }>();
+
+function cssValue(value: { hex: string | null; raw: string } | null) {
+  return value?.hex ?? value?.raw ?? 'transparent';
+}
+
+const cssSnippet = computed(() => {
+  const { inspection } = props;
+  return [
+    `color: ${cssValue(inspection.colors.text)};`,
+    `background-color: ${cssValue(inspection.colors.background)};`,
+    `border-top-color: ${cssValue(inspection.borderSides.top)};`,
+    `border-right-color: ${cssValue(inspection.borderSides.right)};`,
+    `border-bottom-color: ${cssValue(inspection.borderSides.bottom)};`,
+    `border-left-color: ${cssValue(inspection.borderSides.left)};`,
+  ].join('\n');
+});
 </script>
 
 <template>
   <details class="details-card">
     <summary>{{ copy.result.developerDetails }}</summary>
     <div class="details-list">
+      <p class="detail-group-title">Основне</p>
       <div class="detail-row">
         <span>{{ copy.result.tag }}</span>
         <code>&lt;{{ inspection.tagName.toLowerCase() }}&gt;</code>
@@ -25,6 +48,7 @@ defineEmits<{ copy: [] }>();
           inspection.details.classes.length ? `.${inspection.details.classes.join(' .')}` : '—'
         }}</code>
       </div>
+      <p class="detail-group-title">Атрибути</p>
       <div
         v-for="(value, name) in inspection.details.attributes"
         :key="`attribute-${name}`"
@@ -53,6 +77,10 @@ defineEmits<{ copy: [] }>();
     <button class="full-width-button" @click="$emit('copy')">
       <Copy :size="14" aria-hidden="true" />
       {{ copied ? copy.actions.copiedDetails : copy.actions.copyDetails }}
+    </button>
+    <button class="full-width-button secondary-button" @click="$emit('copy-css', cssSnippet)">
+      <Copy :size="14" aria-hidden="true" />
+      {{ copiedCss ? copy.actions.copiedCss : copy.actions.copyCss }}
     </button>
   </details>
 </template>

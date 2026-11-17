@@ -3,6 +3,7 @@ import { Copy } from 'lucide-vue-next';
 import type { UiCopy } from '@/src/shared/i18n/uk.ts';
 import type { ColorValue } from '@/src/shared/messaging/contracts.ts';
 import type { ColorEntry } from '@/src/features/inspector/useInspectorController.ts';
+import { hexToHsl } from '@/src/shared/color/format.ts';
 
 defineProps<{ entry: ColorEntry; copied: string | null; copy: UiCopy }>();
 defineEmits<{ 'copy-value': [value: string] }>();
@@ -44,6 +45,10 @@ function swatchStyle(color: ColorValue | null) {
         <Copy :size="13" aria-hidden="true" />
       </button>
     </div>
+    <details v-if="entry.color?.hex" class="color-formats">
+      <summary>{{ copy.result.formats }}</summary>
+      <code>{{ copy.result.hsl }}: {{ hexToHsl(entry.color.hex) }}</code>
+    </details>
     <span v-else class="value-muted">{{ copy.result.transparent }}</span>
   </article>
 </template>

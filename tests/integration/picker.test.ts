@@ -82,6 +82,20 @@ describe('element picker lifecycle', () => {
     expect(sendMessage).toHaveBeenCalledWith({ type: 'PICKER_CANCELLED', requestId: 'escape' });
   });
 
+  it('selects the hovered element with Enter', () => {
+    const picker = createPicker();
+    const element = document.querySelector('#primary') as HTMLButtonElement;
+
+    picker.start('enter');
+    element.dispatchEvent(new Event('pointermove', { bubbles: true }));
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+    expect(sendMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'ELEMENT_SELECTED', requestId: 'enter' }),
+    );
+    expect(document.querySelector('#korpiox-inspect-overlay')).toBeNull();
+  });
+
   it('stops only for the active request and removes injected styles', () => {
     const picker = createPicker();
 

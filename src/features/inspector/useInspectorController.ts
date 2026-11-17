@@ -216,6 +216,10 @@ export function useInspectorController() {
     }
   }
 
+  async function copyCss(css: string) {
+    await copyText(css, 'css');
+  }
+
   async function copyResult() {
     if (inspection.value) {
       await copyText(JSON.stringify(inspection.value, null, 2), 'result');
@@ -265,6 +269,7 @@ export function useInspectorController() {
     copied,
     copy,
     copyDetails,
+    copyCss,
     copyResult,
     copyValue,
     error,

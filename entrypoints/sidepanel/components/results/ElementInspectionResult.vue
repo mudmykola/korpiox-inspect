@@ -23,6 +23,7 @@ defineProps<{
 defineEmits<{
   'copy-value': [value: string | null];
   'copy-details': [];
+  'copy-css': [value: string];
   'copy-result': [];
 }>();
 </script>
@@ -35,7 +36,12 @@ defineEmits<{
       :copy="copy"
       @copy="$emit('copy-result')"
     />
-    <SelectedElementCard :inspection="inspection" :copy="copy" />
+    <SelectedElementCard
+      :inspection="inspection"
+      :copied="Boolean(inspection.selector) && copied === inspection.selector"
+      :copy="copy"
+      @copy-selector="$emit('copy-value', $event)"
+    />
     <ColorValuesSection
       :entries="colorEntries"
       :copied="copied"
@@ -51,8 +57,10 @@ defineEmits<{
     <DeveloperDetails
       :inspection="inspection"
       :copied="copied === 'details'"
+      :copied-css="copied === 'css'"
       :copy="copy"
       @copy="$emit('copy-details')"
+      @copy-css="$emit('copy-css', $event)"
     />
     <BorderSides :entries="borderEntries" :copy="copy" />
   </section>
